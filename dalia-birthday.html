@@ -89,7 +89,6 @@
     }
     .msg-card.show { opacity:1;transform:scale(1) translateY(0);pointer-events:all; }
 
-    /* spinning border */
     .msg-card::before {
       content:'';position:absolute;inset:-3px;border-radius:39px;
       background:conic-gradient(from 0deg,var(--rose),var(--gold),var(--lilac),var(--sky),var(--rose));
@@ -114,7 +113,6 @@
     .close-btn { margin-top:2rem;padding:.85rem 2.4rem;font-family:'Cairo',sans-serif;font-size:1.05rem;font-weight:700;color:#0d0010;background:linear-gradient(135deg,var(--gold),var(--rose));border:none;border-radius:999px;cursor:pointer;transition:transform .2s; }
     .close-btn:hover { transform:scale(1.07); }
 
-    /* PARTICLES */
     .particle { position:fixed;font-size:2.4rem;pointer-events:none;z-index:810;animation:particleFly var(--dur) cubic-bezier(.15,.65,.35,1) forwards; }
     @keyframes particleFly { 0%{transform:translate(0,0) scale(1.2) rotate(0deg);opacity:1}80%{opacity:1}100%{transform:translate(var(--tx),var(--ty)) scale(.3) rotate(var(--rot));opacity:0} }
 
@@ -203,10 +201,15 @@
 
 <footer>صُنع بكل محبة لداليا 💖</footer>
 
+<audio id="birthdaySong" src="song.m4a"></audio>
+
 <script>
 /* Cursor */
 const cursor = document.getElementById('cursor');
-document.addEventListener('mousemove', e => { cursor.style.left=e.clientX+'px'; cursor.style.top=e.clientY+'px'; });
+document.addEventListener('mousemove', e => { 
+  cursor.style.left=e.clientX+'px'; 
+  cursor.style.top=e.clientY+'px'; 
+});
 
 /* Stars */
 const canvas = document.getElementById('stars');
@@ -323,50 +326,13 @@ function closeMessage() {
   setTimeout(()=>document.getElementById('backdrop').classList.remove('show'), 500);
 }
 
-/* ═══ Happy Birthday — Web Audio ═══ */
-/* ═══ تشغيل الأغنية ═══ */
 function playBirthday() {
   const song = document.getElementById("birthdaySong");
-
-  song.volume = 1;
-
-  song.play().catch(err => {
-    console.log("Audio autoplay blocked:", err);
-  });
+  if(song) {
+    song.volume = 1;
+    song.play().catch(err => console.log("Playback error:", err));
   }
-    /* reverb-like: short delay */
-    const delay = ac.createDelay(.08);
-    const dg = ac.createGain(); dg.gain.value=.18;
-    delay.connect(dg); dg.connect(master);
-
-    const notes=[
-      [261.63,.75],[261.63,.25],[293.66,1],[261.63,1],[349.23,1],[329.63,2],
-      [261.63,.75],[261.63,.25],[293.66,1],[261.63,1],[392.00,1],[349.23,2],
-      [261.63,.75],[261.63,.25],[523.25,1],[440.00,1],[349.23,1],[329.63,1],[293.66,2],
-      [466.16,.75],[466.16,.25],[440.00,1],[349.23,1],[392.00,1],[349.23,2.5]
-    ];
-
-    const bpm=155, beat=60/bpm;
-    let t=ac.currentTime+.08;
-
-    notes.forEach(([f,d])=>{
-      ['sine','triangle'].forEach((type,idx)=>{
-        const o=ac.createOscillator(), g=ac.createGain();
-        o.type=type; o.frequency.value=idx===1?f*2:f;
-        o.connect(g);
-        g.connect(master); g.connect(delay);
-        const vol=idx===0?.38:.12;
-        g.gain.setValueAtTime(0,t);
-        g.gain.linearRampToValueAtTime(vol,t+.04);
-        g.gain.setValueAtTime(vol,t+d*beat-.06);
-        g.gain.linearRampToValueAtTime(0,t+d*beat);
-        o.start(t); o.stop(t+d*beat+.05);
-      });
-      t+=d*beat;
-    });
-  } catch(e){ console.warn(e); }
 }
 </script>
-  <audio id="birthdaySong" src="song.m4a"></audio>
 </body>
 </html>
