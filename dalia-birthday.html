@@ -324,12 +324,16 @@ function closeMessage() {
 }
 
 /* ═══ Happy Birthday — Web Audio ═══ */
+/* ═══ تشغيل الأغنية ═══ */
 function playBirthday() {
-  try {
-    const AC = window.AudioContext || window.webkitAudioContext;
-    const ac = new AC();
-    const master = ac.createGain(); master.gain.value=.45; master.connect(ac.destination);
+  const song = document.getElementById("birthdaySong");
 
+  song.volume = 1;
+
+  song.play().catch(err => {
+    console.log("Audio autoplay blocked:", err);
+  });
+  }
     /* reverb-like: short delay */
     const delay = ac.createDelay(.08);
     const dg = ac.createGain(); dg.gain.value=.18;
@@ -363,6 +367,6 @@ function playBirthday() {
   } catch(e){ console.warn(e); }
 }
 </script>
-  <audio id="birthdaySong" src="song.m"></audio>
+  <audio id="birthdaySong" src="track(1).m4a"></audio>
 </body>
 </html>
